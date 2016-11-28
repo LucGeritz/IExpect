@@ -1,6 +1,9 @@
 <?php
 namespace IExpect;
-
+/**
+*  Class to run multiple tests in given folders
+*  @author Luc Geritz<luc@tigrez.nl>
+*/
 class Runner{
 	
 	private $configFile;
@@ -52,6 +55,10 @@ class Runner{
 		return $ok;
 	}
 	
+	/**
+	* return name config file.
+	* @return string name of config file used
+	*/
 	public function getConfigFile(){
 		return $this->configFile;	
 	}
@@ -68,25 +75,42 @@ class Runner{
 	
 	}
 	
+	/**
+	* get number of total tests done
+	* @return int nr of tests
+	*/	
 	public function getTests(){
 		return $this->assertion->getTests();
 	} 
-	
+	/**
+	* get number of passed tests
+	* @return int nr of passed tests
+	*/	
 	public function getPassed(){
 		return $this->assertion->getPassed();
 		
 	}	
-	
+	/**
+	* get number of failed tests
+	* @return int nr of failed tests
+	*/	
 	public function getFailed(){
 		return $this->assertion->getFailed();
 		
 	}
 	
+	/**
+	* get overall result
+	* @return boolean true 0 tests failed, false >0 tests failed.
+	*/
 	public function getResult(){
 		return $this->assertion->getOverallResult();
-		
 	}
-
+	
+	/**
+	* start test run
+	* @return boolean true all tests ran, false init error
+	*/
 	public function start(){
 				
 		if($this->init()){
