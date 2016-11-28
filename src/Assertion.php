@@ -3,6 +3,7 @@ namespace IExpect;
 
 class Assertion implements IOverallResultHandler{
 	
+	private $expectationClass;
 	private $resultHandler;
 	private $overallResultHandler;
 	private $passed;
@@ -29,10 +30,13 @@ class Assertion implements IOverallResultHandler{
 		$this->overallResultHandler = $handler;
 	}
 	
-	public function setResultHandler(IResult $handler){
+	public function setResultHandler(IResultHandler $handler){
 		$this->resultHandler = $handler;
 	}
 
+	public function setExpectationClass($class){
+		$this->expectationClass = $class;
+	}
 	
 	/**
 	* Prepare an expectation.
@@ -44,7 +48,7 @@ class Assertion implements IOverallResultHandler{
 		
 		$backtrace=debug_backtrace(false); 
         
-		$exp = new Expectation($expr);
+		$exp = new $this->expectationClass($expr);
 		$this->resultHandler->setOverallResultHandler($this);
 		$exp->setResultHandler($this->resultHandler);
 		$exp->setCaller(new Caller($backtrace[0]['file'],$backtrace[0]['line']));
@@ -59,6 +63,8 @@ class Assertion implements IOverallResultHandler{
 		$this->resultHandler = new ResultHandler();
 		// default overallResultHandler is this object itself, can be overridden 
 		$this->overallResultHandler = $this;
+		// default expectation is the Expectation base class
+		$this->expectationClass = 'IExpect\Expectation';
 		$this->passed = 0;
 		$this->failed = 0;
 	}

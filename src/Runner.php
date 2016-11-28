@@ -8,26 +8,8 @@ class Runner{
 	private $params;
 	private $testFiles=array();
 	private $assertion;
-	
-	public function getConfigFile(){
-		return $this->configFile;	
-	}
-	
-	/**
-	* Add an additional autoloader, maybe to locate the classes your testclasses test
-	* @param function $function the autoload function
-	*/
-	public function addAutoloader($function){
-		
-		spl_autoload_register($function);		
-	
-	}
-	
-	public function wasInitOk(){
-		return $this->initOk;
-	}
 
-	public function gatherTestFiles(){
+	private function gatherTestFiles(){
 		
 		$ok=false;
 		
@@ -49,6 +31,42 @@ class Runner{
 		return $ok; 	
 	}	
 	
+	private function init(){
+		
+		$ok = false;	
+		
+		if(file_exists($this->configFile)){
+			$this->params = include($this->configFile);
+			
+			if(isset($this->params['paths'])){
+				
+				if(!isset($this->params['mask'])){
+					$this->paths['mask'] = 'test*.php';
+				}
+				
+				$ok = $this->gatherTestFiles();
+	
+			}	
+		}
+		
+		return $ok;
+	}
+	
+	public function getConfigFile(){
+		return $this->configFile;	
+	}
+	
+	/**
+	* Add an additional autoloader, maybe to locate the 
+	* classes your testclasses test
+	* 
+	* @param function $function the autoload function
+	*/
+	public function addAutoloader($function){
+		
+		spl_autoload_register($function);		
+	
+	}
 	
 	public function getTests(){
 		return $this->assertion->getTests();
@@ -68,44 +86,35 @@ class Runner{
 		return $this->assertion->getOverallResult();
 		
 	}
-	
+
 	public function start(){
+				
+		if($this->init()){
 		
-		$this->assertion = new Assertion();
+			$this->assertion = new Assertion();
 		
-		foreach($this->testFiles as $file){
+			foreach($this->testFiles as $file){
 			
-			require($file);
+				require($file);
 			
-			$class = basename($file, '.php');
+				$class = basename($file, '.php');
 			
-			$test = new $class();
-			$test->run($this->assertion);
+				$test = new $class();
+				$test->run($this->assertion);
 		
-		}
+			}
+			
+			return true;
 						
+		}
+		else{
+			return false;
+		}
 	}
 	
-	public function __construct($configFile){
 	
-		if(empty($configFile)){
-			$configFile = 'Runner.cfg.php'; 		
-		}
-		
-		if(file_exists($configFile)){
-	
-			$this->params = include($configFile);
-			
-			if(isset($this->params['paths'])){
-				
-				if(!isset($this->params['mask'])){
-					$this->paths['mask'] = 'test*.php';
-				}
-				
-				$this->initOk = $this->gatherTestFiles();
-	
-			}	
-		}
+	public function __construct($configFile = 'Runner.cfg.php'){
+		$this->configFile = $configFile;		
 	}
 	
 }

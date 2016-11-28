@@ -15,6 +15,8 @@ class TestClass{
 		return $int * 2;
 	}
 }
+
+
 /**
 * an adhoc testrunner to test the iexpect itself
 */
@@ -50,12 +52,16 @@ class TestIEX{
 		$res = $I->expect($s)->not()->contains("panda");
 		$this->check(OK,$res);
 		
-		// case sensitivity off, should fuind panda
+		// case sensitivity off, should find panda
 		$res = $I->expect($s)->caseInsensitive()->contains("panda");
 		$this->check(OK,$res);						
 		// negate
 		$res = $I->expect($s)->caseInsensitive()->not()->contains("panda");
-		$this->check(NOK,$res);						
+		$this->check(NOK,$res);			
+		
+		$res = $I->expect(12)->contains('panda');			
+		$this->check(NOK,$res);			
+		
 	}
 	
 	private function testHasValue($I){
@@ -228,7 +234,39 @@ class TestIEX{
 		//negate
 		$res = $I->expect(sizeof($arr1))->not()->equals(sizeof($arr2));
 		$this->check(NOK,$res);
+
+		// case (in)sensitivity
+		$res = $I->expect('iexpect')->equals('IexpeCt');
+		$this->check(NOK,$res);
+		$res = $I->expect('iexpect')->caseInsensitive()->equals('IexpeCt');
+		$this->check(OK,$res);
+		// negate
+		$res = $I->expect('iexpect')->not()->equals('IexpeCt');
+		$this->check(OK,$res);
+		$res = $I->expect('iexpect')->not()->caseInsensitive()->equals('IexpeCt');
+		$this->check(NOK,$res);
 		
+		// cmp non strings to strings, should not crash or so, just return false
+		$res = $I->expect(33)->equals('IexpeCt');
+		$this->check(NOK,$res);
+		$res = $I->expect(33)->equals(null);
+		$this->check(NOK,$res);
+		$res = $I->expect(33)->not()->equals('IexpeCt');
+		$this->check(OK,$res);
+		$res = $I->expect(33)->not()->equals(null);
+		$this->check(OK,$res);
+		
+		// .. same with case insensitive
+		$res = $I->expect(33)->caseInsensitive()->equals('IexpeCt');
+		$this->check(NOK,$res);
+		$res = $I->expect('xxx')->caseInsensitive()->equals(33);
+		$this->check(NOK,$res);
+		// negate
+		$res = $I->expect(33)->caseInsensitive()->not()->equals('IexpeCt');
+		$this->check(OK,$res);
+		$res = $I->expect('xxx')->caseInsensitive()->not()->equals(33);
+		$this->check(OK,$res);
+				
 	}
 	
 	private function testIsNull($I){
@@ -347,7 +385,7 @@ class TestIEX{
 		$this->testIsFalsy($assertion);
 		$this->testIsTruthy($assertion);		
 		$this->testIsA($assertion);
-			
+		
 		echo "\ntests  : ".$assertion->getTests();
 		echo "\npassed : ".$assertion->getPassed();
 		echo "\nfailed : ".$assertion->getFailed();

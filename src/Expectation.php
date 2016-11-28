@@ -2,15 +2,21 @@
 namespace IExpect;
 
 /**
-* Represents the expression 
+* Represents the expectation
+* 
+* In function synopses I use the following terminology
+* unmodified result: the result of an comparison before result-modifiers are applied. At the time of writing there's only one, not()
+* assertion expression: the expression loaded in the assertion. This is $this->expression. In the example $I->expect($x)->equals(12) $x is the assertion expression   
+* 
+* @author Luc Geritz<luc@tigrez.nl>
 */
 class Expectation{
 	
-	private $expression = false;
-	private $not = false;
-	private $resultHandler = null;
-	private $caller = null;
-	private $caseSensitive = true;	
+	protected $expression = false;
+	protected $not = false;
+	protected $resultHandler = null;
+	protected $caller = null;
+	protected $caseSensitive = true;	
 	
 	/**
 	* takes use of 'not' in account and maybe more in future
@@ -18,12 +24,12 @@ class Expectation{
 	* 
 	* @return boolean final result
 	*/
-	private function modifyResult($ok){
+	protected function modifyResult($ok){
 		if($this->not) $ok = !$ok;
 		return $ok;	
 	}
 
-	private function show($ok){
+	protected function show($ok){
 		
 		if($this->resultHandler){
 			$this->setResultHandler($ok, $this->caller);
@@ -50,8 +56,9 @@ class Expectation{
 		$this->not = true;
 		return $this;
 	}
+	
 	/**
-	* resultmodifier: set case insensitivity for string comparison
+	* set case sensitivity to false for string comparison
 	*/
 	public function caseInSensitive(){
 		
@@ -78,7 +85,7 @@ class Expectation{
 		return $ok; 		
 	
 	}
-	
+
 	public function isFalsy(){
 		
 		$ok = !$this->expression ? true : false;
@@ -92,35 +99,72 @@ class Expectation{
 	public function isTruthy(){
 		
 		$ok = $this->expression ? true : false;
+
 		$ok = $this->modifyResult($ok);
-		
 		$this->resultHandler->finalize($ok, $this->caller);
 		return $ok;
 	}
 	
+	/**
+	* Check if expression is equal
+	* takes case insensitive in account? yes if both sides of expression are string
+	*
+	* @param mixed $expr 
+	* 
+	* @return unmodified true if passed expression is same as assertion expression
+	*/
 	public function equals($expr){
+		
 		$ok = $expr === $this->expression;
-		if($this->not) $ok = !$ok;
+		if((!$this->caseSensitive) && is_string($this->expression) && is_string($expr)){
+			$ok = (strtolower($expr) == strtolower($this->expression));			
+		}
+				
+		$ok = $this->modifyResult($ok);
 		$this->resultHandler->finalize($ok, $this->caller);
 		return $ok;
 	}
 	
+	/**
+	* Check for substring in string
+	* if the assertion expression is not a string unmodified result will always be false
+	* takes case insensitive in account? yes
+	* @param mixed $value the value to search for in assertion expression
+	* 
+	* @return boolean unmodified true
+	*/
 	public function contains($str){
 		
+		$extra='';
 		$expr = $this->expression;
 		
-		if(!$this->caseSensitive){
-			$expr = strtolower($this->expression);	
-			$str = strtolower($str);
+		if(is_string($expr)){
+			
+			if(!$this->caseSensitive){
+				$expr = strtolower($this->expression);	
+				$str = strtolower($str);
+			}
 		}
-		
+		else{
+			$ok = false;
+			$extra = 'Assertion expression is not a string';
+		}
 		$ok = $this->modifyResult(strpos($expr,$str) !== false);
 		
-		$this->resultHandler->finalize($ok, $this->caller);
+		$this->resultHandler->finalize($ok, $this->caller, $extra);
 		
 		return $ok;
 	}
 	
+	/**
+	* check: has array a given value.
+	* if the assertion expression is not an array unmodified result will always be false
+	* takes case insensitive in account? yes
+	* 
+	* @param mixed $value the value to check existance of
+	* 
+	* @return boolean unmodified true
+	*/
 	public function hasValue($val){
 		
 		$extra=''; 
@@ -136,7 +180,7 @@ class Expectation{
 		}
 		else{
 			$ok = $this->modifyResult(false);
-			$extra = 'Note: Expectation expression is not an array';
+			$extra = 'Note: Assertion expression is not an array';
 		}
 		
 		$this->resultHandler->finalize($ok, $this->caller, $extra);
@@ -145,7 +189,14 @@ class Expectation{
 		
 	}
 	
-	// caseInsensitive does not work on key
+	/**
+	* check: has array given key.
+	* if the assertion expression is not an array unmodified result will always be false
+	* takes case insensitive in account? no
+	* @param mixed $key the key to check existance of
+	* 
+	* @return boolean unmodified true
+	*/
 	public function hasKey($key){
 		
 		$extra = '';
@@ -155,7 +206,7 @@ class Expectation{
 		}
 		else{
 			$ok = $this->modifyResult(false);
-			$extra = 'Note: Expectation expression is not an array';
+			$extra = 'Note: Assertion expression is not an array';
 		}
 		
 		$this->resultHandler->finalize($ok, $this->caller, $extra);
@@ -163,7 +214,15 @@ class Expectation{
 		return $ok;
 	}
 	
-	// caseInsensitive does not work on key, does on value
+	/**
+	* Check: has array given key with given value.
+	* if the assertion expression is not an array unmodified result will always be false
+	* takes case insensitive in account? key no, value yes
+	* @param mixed $key the key to check existance of
+	* @param mixed $val the value to check in array
+	* 
+	* @return boolean unmodified true if array has key with value, false either key not there or key there but value different
+	*/
 	public function hasKeyValue($key, $val){
 		
 		$extra = '';
@@ -182,7 +241,7 @@ class Expectation{
 		}
 		else{
 			$ok = $this->modifyResult(false);
-			$extra = 'Note: Exceptation expression is not an array';
+			$extra = 'Note: Assertion expression is not an array';
 		}
 		
 		$this->resultHandler->finalize($ok, $this->caller, $extra);
