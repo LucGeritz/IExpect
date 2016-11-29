@@ -2,11 +2,11 @@
 // A test class should implement ITest
 // Typically it has a 1:1 relation with a class you want to unit test
 
-class testExample1 implements IExpect\ITest{
+class testExample1 implements Tigrez\IExpect\ITest{
 
 
 	// The only method ITest forces you to implement is run()	
-	public function run(IExpect\Assertion $I){
+	public function run(Tigrez\IExpect\Assertion $I){
 
 		$I->expect(true)->equals(true);
 		$I->expect(1)->equals(1);

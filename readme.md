@@ -16,7 +16,7 @@ How nice is that..
      
 More the negative type? How about `$I->expect(1+1)->not()->equals(3)`.       
   
-While I'm still working at the documentation please refer to the source of the `Expectation` class what more it can do. In the `demo` folder you can find a very useful example as well.
+While I'm still working at the documentation please refer to the source of the `Expectation` class what more it can do. In the `demo` folder you can find very useful examples as well.
 
 You want more checks? It's easy to extend the Expectation class.
 

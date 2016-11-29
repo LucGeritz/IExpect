@@ -1,5 +1,5 @@
 <?php
-namespace IExpect;
+namespace Tigrez\IExpect;
 
 class Assertion implements IOverallResultHandler{
 	
@@ -64,7 +64,7 @@ class Assertion implements IOverallResultHandler{
 		// default overallResultHandler is this object itself, can be overridden 
 		$this->overallResultHandler = $this;
 		// default expectation is the Expectation base class
-		$this->expectationClass = 'IExpect\Expectation';
+		$this->expectationClass = 'Tigrez\IExpect\Expectation';
 		$this->passed = 0;
 		$this->failed = 0;
 	}

@@ -1,0 +1,16 @@
+{
+    "name": "tigrez/iexpect",
+    "description": "A very small unit test library",
+    "authors": [
+        {
+            "name": "Luc Geritz",
+            "email": "luc@tigrez.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Tigrez\\IExpect\\": "src"
+        }
+    },  
+    "require": {}
+}

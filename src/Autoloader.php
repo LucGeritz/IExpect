@@ -1,11 +1,11 @@
 <?php
-
+// Include this file if you don't use IExpect as a composer package   
 spl_autoload_register(
 
 	function ($class) {
 		
 		$baseDir = dirname(__FILE__).'/';
-		$baseNamespace = 'IExpect'; 
+		$baseNamespace = 'Tigrez\IExpect'; 
 		
 		if(strpos($class,$baseNamespace)!==0) return; // not my class
 			$class = trim(str_replace($baseNamespace, '',$class),'\\');

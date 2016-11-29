@@ -1,5 +1,5 @@
 <?php
-namespace IExpect;
+namespace Tigrez\IExpect;
 /**
 *  Class to run multiple tests in given folders
 *  @author Luc Geritz<luc@tigrez.nl>

@@ -1,7 +1,7 @@
 <?php
-class testExample6 implements IExpect\ITest{
+class testExample6 implements Tigrez\IExpect\ITest{
 
-	public function run(IExpect\Assertion $I){
+	public function run(Tigrez\IExpect\Assertion $I){
 
 		$I->expect(true)->equals(true);
 		$I->expect(1)->equals(1);

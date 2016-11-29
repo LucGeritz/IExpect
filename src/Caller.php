@@ -1,5 +1,5 @@
 <?php
-namespace IExpect;
+namespace Tigrez\IExpect;
 
 class Caller{
 	

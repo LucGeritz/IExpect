@@ -11,9 +11,9 @@
 *   - return the modified result 
 *    
 */
-include('../../src/Autoloader.php');
+include('../../vendor/autoload.php');
 
-class MoreExpectation extends IExpect\Expectation{
+class MoreExpectation extends Tigrez\IExpect\Expectation{
 
 	/**
 	* check: does assertion expression start with an X
@@ -51,7 +51,7 @@ class MoreExpectation extends IExpect\Expectation{
 		
 }
 
-$I = new IExpect\Assertion();
+$I = new Tigrez\IExpect\Assertion();
 // to use our own extension we have to tell the assertion like so:
 $I->setExpectationClass('MoreExpectation');
 

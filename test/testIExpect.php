@@ -3,12 +3,12 @@
 * This is the test IExpect itself.
 * It is *not* an example of what a IEXpect testrunner should look like
 */
+include '..\vendor\autoload.php';
+
 define('OK', true);
 define('NOK', false);
 
-include('../src/Autoloader.php');
-
-IExpect\Logo::show();
+Tigrez\IExpect\Logo::show();
 
 class TestClass{
 	public function double($int){
@@ -375,7 +375,7 @@ class TestIEX{
 	
 	public function run(){
 
-		$assertion = new IExpect\Assertion();
+		$assertion = new Tigrez\IExpect\Assertion();
 		
 		$this->testEquals($assertion);
 		$this->testContains($assertion);
