@@ -1,6 +1,10 @@
 {
     "name": "tigrez/iexpect",
     "description": "A very small unit test library",
+    "type": "library",
+    "keywords": ["test","unit test"],
+    "homepage": "https://github.com/LucGeritz/IExpect",
+    "license": "MIT",
     "authors": [
         {
             "name": "Luc Geritz",
@@ -12,5 +16,7 @@
             "Tigrez\\IExpect\\": "src"
         }
     },  
-    "require": {}
+    "require": {
+        "php": ">=5.3.0"
+    }
 }
