@@ -1,5 +1,5 @@
 <?php
-namespace IExpect;
+namespace Tigrez\IExpect;
 
 interface ITest{
 	function run(Assertion $assertion);

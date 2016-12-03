@@ -2,7 +2,7 @@
 
 include ('/../../src/Autoloader.php');
 
-$runner = new IExpect\Runner(dirname(__FILE__).'/run.cfg');
+$runner = new Tigrez\IExpect\Runner(dirname(__FILE__).'/run.cfg');
 	
 if($runner->start()){
 

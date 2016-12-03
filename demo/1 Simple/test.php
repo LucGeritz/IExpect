@@ -1,10 +1,11 @@
 <?php
 include('Stock.php');
-include('../../src/Autoloader.php');
+
+include('..\..\vendor\autoload.php');
 
 // In IExpect we talk to an Assertion
 // I like to use $I because it makes the syntax look like 'I Expect 3*2 equals 6' :)
-$I = new IExpect\Assertion();
+$I = new Tigrez\IExpect\Assertion();
 
 
 // Let's test the Stock class 
@@ -26,8 +27,8 @@ $stock->sell(8);
 $I->expect($stock->getStock())->equals(7);
 
 // final results are provided by the assertion
-echo "\n\nTest: ".$I->getTests()." Passed ".$I->getPassed()." Failed ".$I->getFailed();
-echo "\nOveral: ".$I->getOverallResult();
+echo "\n\nTests ".$I->getTests().", Passed ".$I->getPassed().", Failed ".$I->getFailed();
+echo "\nOveral: ".($I->getOverallResult() ? "Passed" : "Failed");
 
 
 

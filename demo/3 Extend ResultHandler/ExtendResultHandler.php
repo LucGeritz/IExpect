@@ -1,10 +1,10 @@
 <?php
-include('../../src/Autoloader.php');
+include('../../vendor/autoload.php');
 
 
-class WebResultHandler extends IExpect\ResultHandler{
+class WebResultHandler extends Tigrez\IExpect\ResultHandler{
 		
-		protected function show($ok, IExpect\Caller $caller, $extra=''){
+		protected function show($ok, Tigrez\IExpect\Caller $caller, $extra=''){
 			
 			$prefix = $this->prefix($caller);
 		
@@ -24,7 +24,7 @@ class WebResultHandler extends IExpect\ResultHandler{
 			
 }
 
-$I = new IExpect\Assertion();
+$I = new Tigrez\IExpect\Assertion();
 $I -> setResultHandler(new WebResultHandler());
 
 ?>
