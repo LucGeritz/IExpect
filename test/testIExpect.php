@@ -1,7 +1,10 @@
 <?php
 /**
-* This is the test IExpect itself.
-* It is *not* an example of what a IEXpect testrunner should look like
+* This is the test of IExpect itself.
+* It is *not* an example of what a IEXpect testrunner should look like since in this script
+* we'll let some tests fail on purpose. For good examples look into the src\demo folder!
+*  
+* @author Luc Geritz<luc@tigrez.nl>
 */
 include '..\vendor\autoload.php';
 
@@ -10,12 +13,32 @@ define('NOK', false);
 
 Tigrez\IExpect\Logo::show();
 
+// Some classes to use in tests
 class TestClass{
 	public function double($int){
 		return $int * 2;
 	}
 }
 
+class Descendant extends TestClass{
+	public function yeah(){
+		return 'yeah';
+	}
+}
+
+interface TestInterface{
+	function quantadruple($num);
+}
+
+class InterfaceUser implements TestInterface{
+	function quantadruple($num){
+		// do something
+	}
+}
+
+class InterfaceUserDescendant extends InterfaceUser{
+	private $r='';	
+}
 
 /**
 * an adhoc testrunner to test the iexpect itself
@@ -63,6 +86,18 @@ class TestIEX{
 		$this->check(NOK,$res);			
 		
 	}
+
+	private function testIsFile($I){
+	
+		// I expect this script  to be a file
+		$res = $I->expect(__FILE__)->isFile();
+		$this->check(OK,$res);			
+		
+		// negate
+		$res = $I->expect(__FILE__)->not()->isFile();
+		$this->check(NOK,$res);			
+			
+	}	
 	
 	private function testHasValue($I){
 		
@@ -278,11 +313,11 @@ class TestIEX{
 		$res = $I->expect(12)->isNull();
 		$this->check(NOK,$res);
 		
-		// falsy != null !!!!
-		$res = $I->expect(false)->isNull();
-		$this->check(NOK,$res);
-		$res = $I->expect('')->isNull();
-		$this->check(NOK,$res);
+		
+		$res = $I->expect(false)->isNull(); // I expect false is null
+		$this->check(NOK,$res);            // No it isn't
+		$res = $I->expect('')->isNull();  // I expect '' is  null
+		$this->check(NOK,$res);          // No it isn't
 
 		// negate
 		$res = $I->expect(false)->not()->isNull();
@@ -332,6 +367,55 @@ class TestIEX{
 		// negate
 		$res = $I->expect($x)->not()->isA('OtherClass');
 		$this->check(OK,$res);
+				
+		// some tests on a Descendant
+		$x = new Descendant();
+		$res = $I->expect($x)->isA('Descendant');
+		$this->check(OK,$res);
+		$res = $I->expect($x)->isA('TestClass');
+		$this->check(OK,$res);
+		//negate
+		$res = $I->expect($x)->not()->isA('Descendant');
+		$this->check(NOK,$res);
+		$res = $I->expect($x)->not()->isA('TestClass');
+		$this->check(NOK,$res);
+
+		// some tests on interface 
+		$x = new InterfaceUser();
+		$res = $I->expect($x)->isA('TestInterface');		
+		$this->check(OK,$res);
+		$res = $I->expect($x)->isA('InterfaceUser');		
+		$this->check(OK,$res);
+		// negate
+		$x = new InterfaceUser();
+		$res = $I->expect($x)->not()->isA('TestInterface');		
+		$this->check(NOK,$res);
+		$res = $I->expect($x)->not()->isA('InterfaceUser');		
+		$this->check(NOK,$res);
+		
+		// interface + descendant
+		$x = new InterfaceUserDescendant();
+		$res = $I->expect($x)->isA('TestInterface');		
+		$this->check(OK,$res);
+		$res = $I->expect($x)->isA('InterfaceUser');		
+		$this->check(OK,$res);
+		$res = $I->expect($x)->isA('InterfaceUserDescendant');		
+		$this->check(OK,$res);
+		$res = $I->expect($x)->isA('TestClass');		
+		$this->check(NOK,$res);
+		
+		// negate
+		$res = $I->expect($x)->not()->isA('TestInterface');		
+		$this->check(NOK,$res);
+		$res = $I->expect($x)->not()->isA('InterfaceUser');		
+		$this->check(NOK,$res);
+		$res = $I->expect($x)->not()->isA('InterfaceUserDescendant');		
+		$this->check(NOK,$res);
+		$res = $I->expect($x)->not()->isA('TestClass');		
+		$this->check(OK,$res);
+		
+		
+		
 				
 	}	
 	
@@ -385,6 +469,7 @@ class TestIEX{
 		$this->testIsFalsy($assertion);
 		$this->testIsTruthy($assertion);		
 		$this->testIsA($assertion);
+		$this->testIsFile($assertion);
 		
 		echo "\ntests  : ".$assertion->getTests();
 		echo "\npassed : ".$assertion->getPassed();

@@ -75,7 +75,21 @@ class Expectation{
 		return $ok;
 		
 	}
+	
+	/**
+	* Check if file exists
+	* takes case insensitive in account? no, whether case has to match is OS dependent
+	*
+	* @return unmodified true if there's a file with name equal to the the assertion expression 
+	*/
+	public function isFile(){
 
+		$ok = $this->modifyResult(file_exists($this->expression));
+		$this->resultHandler->finalize($ok, $this->caller);
+		
+		return $ok;
+	}
+	
 	public function isA($className){
 	
 		$ok = $this->modifyResult(is_a($this->expression,$className));
