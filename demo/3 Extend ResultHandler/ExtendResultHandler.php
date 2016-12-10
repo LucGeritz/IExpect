@@ -1,7 +1,6 @@
 <?php
 include('../../vendor/autoload.php');
 
-
 class WebResultHandler extends Tigrez\IExpect\ResultHandler{
 		
 		protected function show($ok, Tigrez\IExpect\Caller $caller, $extra=''){
