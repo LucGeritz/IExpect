@@ -1,5 +1,5 @@
 ##I Expect
-
+TEST
 IExpect is a small unit test library for use in PHP. It's syntax is intuitive.
 
 The assertion
